@@ -1,6 +1,22 @@
 # VPN Gate 自动选优与分流
 
-在 Linux 落地机上为指定域名选择美国 VPN Gate 出口。Xray 给匹配流量的 IPv4 出站连接设置 `SO_MARK=51888`，Linux 策略路由把它们送入当前健康的 OpenVPN 隧道。其他流量继续使用系统默认出口。示例将 Meta 和 `muse.ai` 分流，支持接入已有的 Xray/VLESS 和可选的 Hysteria 2 服务。
+在 Linux 落地机上为指定域名自动挑选 VPN Gate 出口，并在隧道故障时切换到备用。其他流量继续走系统默认出口。当前发布版以美国出口和 Meta 站点探测为例，支持接入已有的 Xray/VLESS 和 Hysteria 2 服务。
+
+## 为什么做这个项目
+
+海外 VPS 的固定出口 IP 有时会被部分服务识别为中国大陆 IP，俗称「被送中」。服务所用的 IP 地理数据可能给出不同判断，导致某些网站或地区功能受限。按域名分流，可以只给受影响的服务换出口。参见 [MaxMind 的 IP 定位说明](https://support.maxmind.com/knowledge-base/articles/maxmind-geolocation-accuracy)。
+
+VPN Gate 的公共中继由世界各地的志愿者运行，覆盖不同运营商和网络，其中包括家庭宽带。节点可能下线，IP 也会变化。项目会从落地机连上候选隧道，实测出口地区、目标站点可达性和连接质量，然后自动选主线、维护备用。参见 [VPN Gate 官方介绍](https://www.vpngate.net/EN/about_overview.aspx)。
+
+## 当前用例与适用范围
+
+当前发布版使用 Cloudflare 的 IP 回显核对出口 IP 是否被识别为美国，再探测 Instagram、Threads、Facebook 和 WhatsApp 的 HTTPS 可达性。探测结果反映测试时的 IP 地区判断和站点连通情况。登录后的功能可用性和账号地区以目标平台的判定为准。
+
+仓库的代理配置示例将 Meta 和 `muse.ai` 分流。要将同一套选优和切换机制用于其他国家或服务，需要修改扫描和健康检查中的国家条件、扫描中的探测网址，以及代理的域名规则。
+
+## 分流路径
+
+Xray 为匹配流量的 IPv4 出站连接设置 `SO_MARK=51888`。Linux 策略路由将带标记的流量送入当前健康的 OpenVPN 隧道。
 
 ```text
 Xray / VLESS ──域名匹配─────────────────┐
