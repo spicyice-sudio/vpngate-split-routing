@@ -1,0 +1,11 @@
+[Unit]
+Description=US VPN Gate tunnel for Meta traffic
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+ExecStart=/usr/sbin/openvpn --config /etc/meta-vpngate/client.ovpn
+Restart=always
+RestartSec=5
+[Install]
+WantedBy=multi-user.target

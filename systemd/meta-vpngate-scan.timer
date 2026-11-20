@@ -1,0 +1,10 @@
+[Unit]
+Description=Scan US VPN Gate every six hours
+[Timer]
+OnCalendar=*-*-* 02,08,14,20:20:00 UTC
+RandomizedDelaySec=3min
+AccuracySec=30s
+Persistent=true
+Unit=meta-vpngate-scan.service
+[Install]
+WantedBy=timers.target

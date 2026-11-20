@@ -1,0 +1,14 @@
+acl:
+  geosite: /usr/local/share/xray/geosite.dat
+  inline:
+    - vpn_gate_us(geosite:meta)
+    - vpn_gate_us(suffix:muse.ai)
+    - direct(all)
+
+outbounds:
+  - name: vpn_gate_us
+    type: socks5
+    socks5:
+      addr: 127.0.0.1:19080
+  - name: direct
+    type: direct

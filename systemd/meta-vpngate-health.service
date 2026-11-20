@@ -1,0 +1,15 @@
+[Unit]
+Description=Meta VPN Gate HTTPS health and original-exit fallback
+After=network-online.target meta-vpngate.service meta-vpngate-backup@1.service meta-vpngate-backup@2.service
+Wants=network-online.target meta-vpngate.service meta-vpngate-backup@1.service meta-vpngate-backup@2.service
+[Service]
+EnvironmentFile=-/etc/meta-vpngate/settings.env
+Type=simple
+ExecStart=/usr/local/libexec/meta-vpn-health.py
+ExecStopPost=/usr/local/libexec/meta-vpn-health.py clear
+Restart=always
+RestartSec=2
+RuntimeDirectory=meta-vpngate
+RuntimeDirectoryMode=0755
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.ovpn
+*.pem
+*.key
+*.env
+*.sqlite3
+*-report.json
+candidates.json
+qualified-pool.json
+standbys.json
+selected.json
+probe-history.json
+health-memory*.json
+status.json

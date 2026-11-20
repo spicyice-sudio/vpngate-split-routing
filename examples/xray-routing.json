@@ -1,0 +1,36 @@
+{
+  "inbounds": [
+    {
+      "tag": "vpn-gate-socks",
+      "listen": "127.0.0.1",
+      "port": 19080,
+      "protocol": "socks",
+      "settings": { "auth": "noauth", "udp": true }
+    }
+  ],
+  "outbounds": [
+    { "tag": "direct", "protocol": "freedom" },
+    {
+      "tag": "vpn-gate-us",
+      "protocol": "freedom",
+      "streamSettings": {
+        "sockopt": { "mark": 51888, "domainStrategy": "ForceIPv4" }
+      }
+    }
+  ],
+  "routing": {
+    "rules": [
+      {
+        "type": "field",
+        "inboundTag": ["vpn-gate-socks"],
+        "outboundTag": "vpn-gate-us"
+      },
+      {
+        "type": "field",
+        "inboundTag": ["vless-in"],
+        "domain": ["geosite:meta", "domain:muse.ai"],
+        "outboundTag": "vpn-gate-us"
+      }
+    ]
+  }
+}
